@@ -1,9 +1,9 @@
 # Copyright (C) 2016-2019 by Vd.
 # Copyright (C) 2012 by Brian Neal.
-# This file is part of Py-Enigma, the Enigma Machine simulation.
-# Py-Enigma is released under the MIT License (see License.txt).
+# This file is part of RuNigma, the RuNigma Machine.
+# RuNigma is released under the MIT License (see License.txt).
 
-"""This module contains the top-level EnigmaMachine class for the Enigma Machine
+"""This module contains the top-level RuNigmaMachine class for the RuNigma Machine
 simulation.
 
 """
@@ -14,7 +14,7 @@ from .plugboard import Plugboard
 from .keyfile import get_daily_settings
 
 
-class EnigmaError(Exception):
+class RuNigmaError(Exception):
     pass
 
 # The Enigma keyboard consists of the 70 letters of the alphabet, uppercase
@@ -24,11 +24,11 @@ KEYBOARD_CHARS_LEN = len(KEYBOARD_CHARS)
 KEYBOARD_SET = set(KEYBOARD_CHARS)
 
 
-class EnigmaMachine:
-    """Top-level class for the Enigma Machine simulation."""
+class RuNigmaMachine:
+    """Top-level class for the RuNigma Machine."""
 
     def __init__(self, rotors, reflector, plugboard):
-        """Configures the Enigma Machine. Parameters are as follows:
+        """Configures the RuNigma Machine. Parameters are as follows:
 
         rotors - a list containing 5 Rotor objects. The order of the list
         is important. The first rotor is the left-most rotor, and the last
@@ -41,7 +41,7 @@ class EnigmaMachine:
 
         """
         if len(rotors) != 5:
-            raise EnigmaError("Must supply 5 rotors")
+            raise RuNigmaError("Must supply 5 rotors")
 
         self.rotors = rotors
         self.rotor_count = len(rotors)
@@ -52,7 +52,7 @@ class EnigmaMachine:
     def from_key_sheet(cls, rotors='А Б В Г Д', ring_settings=None,
             reflector='А', plugboard_settings=None):
 
-        """Convenience function to build an EnigmaMachine from the data as you
+        """Convenience function to build an RuNigmaMachine from the data as you
         might find it on a key sheet:
 
         rotors: either a list of strings naming the rotors from left to right
@@ -85,7 +85,7 @@ class EnigmaMachine:
 
         num_rotors = len(rotors)
         if num_rotors != 5:
-            raise EnigmaError("invalid rotors list size")
+            raise RuNigmaError("invalid rotors list size")
 
         if ring_settings is None:
             ring_settings = [0] * num_rotors
@@ -96,7 +96,7 @@ class EnigmaMachine:
                 ring_settings.append(KEYBOARD_CHARS.index(s))
 
         if num_rotors != len(ring_settings):
-            raise EnigmaError("# of rotors doesn't match # of ring settings")
+            raise RuNigmaError("# of rotors doesn't match # of ring settings")
 
         # assemble the machine
         rotor_list = [create_rotor(r[0], r[1]) for r in zip(rotors, ring_settings)]
@@ -128,7 +128,7 @@ class EnigmaMachine:
 
         """
         if len(val) != self.rotor_count:
-            raise EnigmaError("Incorrect length for display value")
+            raise RuNigmaError("Incorrect length for display value")
 
         for i, rotor in enumerate(reversed(self.rotors)):
             rotor.set_display(val[-1 - i])
@@ -150,7 +150,7 @@ class EnigmaMachine:
 
         """
         if key not in KEYBOARD_SET:
-            raise EnigmaError('illegal key press %s' % key)
+            raise RuNigmaError('illegal key press %s' % key)
 
         # simulate the mechanical action of the machine
         self._step_rotors()

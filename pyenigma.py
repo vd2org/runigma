@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # Copyright (C) 2012 by Brian Neal.
-# This file is part of Py-Enigma, the Enigma Machine simulation.
-# Py-Enigma is released under the MIT License (see License.txt).
+# This file is part of RuNigma, the RuNigma Machine.
+# RuNigma is released under the MIT License (see License.txt).
 
-import enigma.main
+import runigma.main
 
-enigma.main.console_main()
+runigma.main.console_main()

@@ -1,9 +1,9 @@
 # Copyright (C) 2016-2019 by Vd.
 # Copyright (C) 2012 by Brian Neal.
-# This file is part of Py-Enigma, the Enigma Machine simulation.
-# Py-Enigma is released under the MIT License (see License.txt).
+# This file is part of RuNigma, the RuNigma Machine.
+# RuNigma is released under the MIT License (see License.txt).
 
-"""Provide an example command-line app that can setup an EnigmaMachine and
+"""Provide an example command-line app that can setup an RuNigmaMachine and
 process text.
 
 """
@@ -11,7 +11,7 @@ process text.
 import argparse
 import sys
 
-from .machine import EnigmaMachine, EnigmaError
+from .machine import RuNigmaMachine, RuNigmaError
 from .rotors import RotorError
 from .keyfile import KeyFileError
 
@@ -38,14 +38,14 @@ Examples:
 """
 
 def create_from_key_file(filename, day=None):
-    """Create an EnigmaMachine from a daily key sheet."""
+    """Create an RuNigmaMachine from a daily key sheet."""
 
     with open(filename, 'r') as f:
-        return EnigmaMachine.from_key_file(f, day)
+        return RuNigmaMachine.from_key_file(f, day)
 
 
 def create_from_args(parser, args):
-    """Create an EnigmaMachine from command-line specs."""
+    """Create an RuNigmaMachine from command-line specs."""
 
     if args.rotors is None:
         parser.error("Please specify 5 rotors; e.g. А Б В Г Д")
@@ -58,10 +58,10 @@ def create_from_args(parser, args):
     ring_settings = ' '.join(args.ring_settings) if args.ring_settings else None
     plugboard = ' '.join(args.plugboard) if args.plugboard else None
 
-    return EnigmaMachine.from_key_sheet(rotors=args.rotors,
-                                        ring_settings=ring_settings,
-                                        plugboard_settings=plugboard,
-                                        reflector=args.reflector)
+    return RuNigmaMachine.from_key_sheet(rotors=args.rotors,
+                                         ring_settings=ring_settings,
+                                         plugboard_settings=plugboard,
+                                         reflector=args.reflector)
 
 
 def main():
@@ -134,7 +134,7 @@ def main():
 def console_main():
     try:
         main()
-    except (IOError, EnigmaError, RotorError, KeyFileError) as ex:
+    except (IOError, RuNigmaError, RotorError, KeyFileError) as ex:
         sys.stderr.write("%s\n" % ex)
 
 

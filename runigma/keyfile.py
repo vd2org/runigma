@@ -1,7 +1,7 @@
 # Copyright (C) 2016-2019 by Vd.
 # Copyright (C) 2012 by Brian Neal.
-# This file is part of Py-Enigma, the Enigma Machine simulation.
-# Py-Enigma is released under the MIT License (see License.txt).
+# This file is part of RuNigma, the RuNigma Machine.
+# RuNigma is released under the MIT License (see License.txt).
 
 """Contains a function to read key settings from a file.
 
@@ -40,7 +40,7 @@ def get_daily_settings(fp, day=None):
     day - specifies the day number to look for in the file (1-31). If day is
     None, the day number from today is used.
     
-    Returns a dictionary of keyword arguments for EnigmaMachine.from_key_sheet.
+    Returns a dictionary of keyword arguments for RuNigmaMachine.from_key_sheet.
 
     """
     if day is None:

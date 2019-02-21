@@ -1,4 +1,4 @@
 include *.txt
-recursive-include enigma/examples *
-recursive-include enigma/docs *.txt *.py *.rst
-prune enigma/docs/build
+recursive-include runigma/examples *
+recursive-include runigma/docs *.txt *.py *.rst
+prune runigma/docs/build

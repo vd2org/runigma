@@ -7,7 +7,7 @@
 
 import unittest
 
-from ..machine import EnigmaMachine
+from ..machine import RuNigmaMachine
 
 
 class SteppingTestCase(unittest.TestCase):
@@ -20,7 +20,7 @@ class SteppingTestCase(unittest.TestCase):
         # This example taken from 
         # http://users.telenet.be/d.rijmenants/en/enigmatech.htm
         # in the section on "The Stepping Mechanism."
-        m = EnigmaMachine.from_key_sheet(rotors=['III', 'II', 'I'])
+        m = RuNigmaMachine.from_key_sheet(rotors=['III', 'II', 'I'])
 
         m.set_display('KDO')
 
@@ -37,7 +37,7 @@ class SimpleCipherTestCase(unittest.TestCase):
     CIPHER_TEXT = 'BDZGO'
 
     def setUp(self):
-        self.machine = EnigmaMachine.from_key_sheet(rotors=['I', 'II', 'III'])
+        self.machine = RuNigmaMachine.from_key_sheet(rotors=['I', 'II', 'III'])
         self.machine.set_display('AAA')
 
     def test_simple_encrypt(self):
@@ -60,7 +60,7 @@ class ActualDecryptTestCase(unittest.TestCase):
     """
     def setUp(self):
 
-        self.machine = EnigmaMachine.from_key_sheet(
+        self.machine = RuNigmaMachine.from_key_sheet(
                 rotors='II IV V',
                 reflector='B',
                 ring_settings='B U L',
@@ -148,7 +148,7 @@ class KriegsmarineTestCase(unittest.TestCase):
 
         stecker ='1/20 2/12 4/6 7/10 8/13 14/23 15/16 17/25 18/26 22/24'
 
-        machine = EnigmaMachine.from_key_sheet(
+        machine = RuNigmaMachine.from_key_sheet(
                     rotors='Beta II IV I',
                     ring_settings='A A A V',
                     reflector='B-Thin',
