@@ -25,6 +25,6 @@ def create_reflector(model):
     
     """
     if model in REFLECTORS:
-        return Rotor(model, wiring=REFLECTORS[model])
+        return Rotor(model, wiring=REFLECTORS[model]['wiring'], plaintext=REFLECTORS[model]['plaintext'])
 
     raise RotorError("Unknown reflector type: %s" % model)

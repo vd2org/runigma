@@ -18,7 +18,8 @@ class EnigmaError(Exception):
 
 # The Enigma keyboard consists of the 26 letters of the alphabet, uppercase
 # only:
-KEYBOARD_CHARS = string.ascii_uppercase
+KEYBOARD_CHARS = 'abcdefghijklmnopqrstuvwxyzАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ0123456789_'
+KEYBOARD_CHARS_LEN = len(KEYBOARD_CHARS)
 KEYBOARD_SET = set(KEYBOARD_CHARS)
 
 
@@ -44,8 +45,8 @@ class EnigmaMachine:
         machine.
 
         """
-        if len(rotors) not in [3, 4]:
-            raise EnigmaError("Must supply 3 or 4 rotors")
+        if len(rotors) != 5:
+            raise EnigmaError("Must supply 5 rotors")
 
         self.rotors = rotors
         self.rotor_count = len(rotors)
@@ -53,8 +54,8 @@ class EnigmaMachine:
         self.plugboard = plugboard
 
     @classmethod
-    def from_key_sheet(cls, rotors='I II III', ring_settings=None,
-            reflector='B', plugboard_settings=None):
+    def from_key_sheet(cls, rotors='А Б В Г Д', ring_settings=None,
+            reflector='А', plugboard_settings=None):
 
         """Convenience function to build an EnigmaMachine from the data as you
         might find it on a key sheet:
@@ -88,21 +89,16 @@ class EnigmaMachine:
             rotors = rotors.split()
 
         num_rotors = len(rotors)
-        if num_rotors not in (3, 4):
+        if num_rotors != 5:
             raise EnigmaError("invalid rotors list size")
 
         if ring_settings is None:
             ring_settings = [0] * num_rotors
-        elif isinstance(ring_settings, str):
+        else:
             strings = ring_settings.split()
             ring_settings = []
             for s in strings:
-                if s.isalpha():
-                    ring_settings.append(ord(s.upper()) - ord('A'))
-                elif s.isdigit():
-                    ring_settings.append(int(s) - 1)
-                else:
-                    raise EnigmaError('invalid ring setting: %s' % s)
+                ring_settings.append(KEYBOARD_CHARS.index(s))
 
         if num_rotors != len(ring_settings):
             raise EnigmaError("# of rotors doesn't match # of ring settings")
@@ -144,10 +140,8 @@ class EnigmaMachine:
 
     def get_display(self):
         """Returns the operator display as a string."""
-
-        return "{}{}{}".format(self.rotors[-3].get_display(),
-                               self.rotors[-2].get_display(),
-                               self.rotors[-1].get_display())
+        
+        return ''.join([r.get_display() for r in self.rotors])
 
     def key_press(self, key):
         """Simulate a front panel key press. 
@@ -167,7 +161,7 @@ class EnigmaMachine:
         self._step_rotors()
 
         # simulate the electrical operations:
-        signal_num = ord(key) - ord('A')
+        signal_num = KEYBOARD_CHARS.index(key)
         lamp_num = self._electric_signal(signal_num)
         return KEYBOARD_CHARS[lamp_num]
 
@@ -191,10 +185,14 @@ class EnigmaMachine:
         rotor1 = self.rotors[-1]
         rotor2 = self.rotors[-2]
         rotor3 = self.rotors[-3]
+        rotor4 = self.rotors[-4]
+        rotor5 = self.rotors[-5]
 
         # decide which rotors can move
         rotate2 = rotor1.notch_over_pawl() or rotor2.notch_over_pawl()
-        rotate3 = rotor2.notch_over_pawl()
+        rotate3 = rotor2.notch_over_pawl() or rotor3.notch_over_pawl()
+        rotate4 = rotor3.notch_over_pawl() or rotor4.notch_over_pawl()
+        rotate5 = rotor4.notch_over_pawl() or rotor5.notch_over_pawl()
 
         # move rotors
         rotor1.rotate()
@@ -202,6 +200,10 @@ class EnigmaMachine:
             rotor2.rotate()
         if rotate3:
             rotor3.rotate()
+        if rotate4:
+            rotor4.rotate()
+        if rotate5:
+            rotor5.rotate()
 
     def _electric_signal(self, signal_num):
         """Simulate running an electric signal through the machine in order to
@@ -217,14 +219,17 @@ class EnigmaMachine:
         for rotor in reversed(self.rotors):
             pos = rotor.signal_in(pos)
 
-        pos = self.reflector.signal_in(pos)
+        pos, plaintext = self.reflector.signal_in_reflector(pos)
+        
+        if plaintext:
+            return signal_num
 
         for rotor in self.rotors:
             pos = rotor.signal_out(pos)
 
         return self.plugboard.signal(pos)
 
-    def process_text(self, text, replace_char='X'):
+    def process_text(self, text, replace_char='_'):
         """Run the text through the machine, simulating a key press for each
         letter in the text.
 
@@ -238,15 +243,13 @@ class EnigmaMachine:
         """
         result = []
         for key in text:
-            c = key.upper()
-
-            if c not in KEYBOARD_SET: 
+            if key not in KEYBOARD_SET: 
                 if replace_char:
-                    c = replace_char
+                    key = replace_char
                 else:
                     continue    # ignore it
 
-            result.append(self.key_press(c))
+            result.append(self.key_press(key))
 
         return ''.join(result)
 

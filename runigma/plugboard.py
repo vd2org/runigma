@@ -14,10 +14,11 @@ import string
 
 
 # On Heer & Luftwaffe (?) models, the plugs are labeled with upper case letters
-HEER_LABELS = string.ascii_uppercase
+HEER_LABELS = 'abcdefghijklmnopqrstuvwxyzАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ0123456789_'
+HEER_LABELS_LEN = len(HEER_LABELS)
 
 # The number of plugboard cables supplied with a machine:
-MAX_PAIRS = 10
+MAX_PAIRS = 20
 
 
 class PlugboardError(Exception):
@@ -54,12 +55,12 @@ class Plugboard:
 
         """
         # construct wiring mapping table with default 1-1 mappings
-        self.wiring_map = list(range(26))
+        self.wiring_map = list(range(HEER_LABELS_LEN))
 
         # construct backup storage for the wiring map; this is useful when
         # hill-climbing and is used when the Plugboard is used as a context
         # manager
-        self._backup_map = list(range(26))
+        self._backup_map = list(range(HEER_LABELS_LEN))
 
         # use settings if provided
         if not wiring_pairs:
@@ -78,7 +79,7 @@ class Plugboard:
         for pair in wiring_pairs:
             m = pair[0]
             n = pair[1]
-            if not (0 <= m < 26) or not (0 <= n < 26):
+            if not (0 <= m < HEER_LABELS_LEN) or not (0 <= n < HEER_LABELS_LEN):
                 raise PlugboardError('invalid connection: %s' % str(pair))
 
             self.wiring_map[m] = n
@@ -125,7 +126,7 @@ class Plugboard:
                 wiring_pairs.append((m - 1, n - 1))
         else:
             # Heer/Luftwaffe syntax
-            pairs = settings.upper().split()
+            pairs = settings.split()
 
             for p in pairs:
                 if len(p) != 2:
@@ -136,14 +137,14 @@ class Plugboard:
                 if m not in HEER_LABELS or n not in HEER_LABELS:
                     raise PlugboardError('invalid pair: %s' % p)
 
-                wiring_pairs.append((ord(m) - ord('A'), ord(n) - ord('A')))
+                wiring_pairs.append((HEER_LABELS.index(m), HEER_LABELS.index(n)))
 
         return cls(wiring_pairs)
 
     def get_pairs(self):
         """Return the connections as a set of tuple pairs."""
         pairs = set()
-        for x in range(0, 26):
+        for x in range(0, HEER_LABELS_LEN):
             y = self.wiring_map[x]
             if x != y and (y, x) not in pairs:
                 pairs.add((x, y))
@@ -178,6 +179,7 @@ class Plugboard:
         is coming from.
 
         """
+
         return self.wiring_map[n]
 
     # Support for hill-climbing algorithms:
@@ -196,13 +198,13 @@ class Plugboard:
 
     def __enter__(self):
         """Saves the current state of the wiring map."""
-        for n in range(26):
+        for n in range(HEER_LABELS_LEN):
             self._backup_map[n] = self.wiring_map[n]
         return self
 
     def __exit__(self, *exc_info):
         """Restores the saved state of the wiring map."""
-        for n in range(26):
+        for n in range(HEER_LABELS_LEN):
             self.wiring_map[n] = self._backup_map[n]
 
     def connection(self, n):

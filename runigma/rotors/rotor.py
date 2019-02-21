@@ -10,7 +10,8 @@ import collections
 from . import RotorError
 
 
-ALPHA_LABELS = string.ascii_uppercase
+ALPHA_LABELS = 'abcdefghijklmnopqrstuvwxyzАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ0123456789_'
+ALPHA_LABELS_LEN = len(ALPHA_LABELS)
 
 # In specifying a wiring for a rotor, every letter must be included exactly
 # once. This variable helps us enforce that:
@@ -20,7 +21,7 @@ WIRING_FREQ_SET = set((letter, 1) for letter in ALPHA_LABELS)
 class Rotor:
     """The Rotor class represents the Enigma Machine rotors (Walzen).
     
-    A rotor has 26 circularly arranged pins on the right (entry) side and 26
+    A rotor has 64 circularly arranged pins on the right (entry) side and 64
     contacts on the left side. Each pin is connected to a single contact by
     internal wiring, thus establishing a substitution cipher. We represent this
     wiring by establishing a mapping from a pin to a contact (and vice versa for
@@ -29,13 +30,13 @@ class Rotor:
 
     An alphabetic or numeric ring is fastened to the rotor by the operator. The
     labels of this ring are displayed to the operator through a small window on
-    the top panel. The ring can be fixed to the rotor in one of 26 different
+    the top panel. The ring can be fixed to the rotor in one of 64 different
     positions; this is called the ring setting (Ringstellung). We will number
     the ring settings from 0-25 where 0 means no offset (e.g. the letter "A" is
     mapped to pin 0 on an alphabetic ring). A ring setting of 1 means the letter
     "B" is mapped to pin 0.
 
-    Each rotor can be in one of 26 positions on the spindle, with position 0
+    Each rotor can be in one of 64 positions on the spindle, with position 0
     where pin/contact 0 is being indicated in the operator window. The rotor
     rotates towards the operator by mechanical means during normal operation as
     keys are being pressed during data entry. Position 1 is thus defined to be
@@ -59,12 +60,12 @@ class Rotor:
     
     """
 
-    def __init__(self, model_name, wiring, ring_setting=0, stepping=None):
+    def __init__(self, model_name, wiring, ring_setting=0, stepping=None, plaintext=None):
         """Establish rotor characteristics:
 
         model_name - e.g. "I", "II", "III", "Beta", "Gamma"
 
-        wiring - this should be a string of 26 alphabetic characters that
+        wiring - this should be a string of 64 alphabetic characters that
         represents the internal wiring transformation of the signal as it enters
         from the right side. This is the format used in various online
         resources. For example, for the Wehrmacht Enigma type I rotor the
@@ -88,19 +89,27 @@ class Rotor:
 
         Note that for purposes of simulation, our rotors will always use
         alphabetic labels A-Z. In reality, the Heer & Luftwaffe devices used
-        numbers 01-26, and Kriegsmarine devices used A-Z. Our usage of A-Z is
+        numbers 01-64, and Kriegsmarine devices used A-Z. Our usage of A-Z is
         simply for simulation convenience. In the future we may allow either
         display.
 
         """
         self.name = model_name
-        self.wiring_str = wiring.upper()
+        self.wiring_str = wiring
         self.ring_setting = ring_setting
         self.pos = 0
         self.rotations = 0
+        
+        # check plaintext letters and initialize plaintext_pins
+        self.plaintext_pins = list()
+        if plaintext:
+            for l in plaintext:
+                if l not in ALPHA_LABELS:
+                    raise RotorError("invalid plaintext letter")
+                self.plaintext_pins.append(ALPHA_LABELS.index(l))
 
         # check wiring length
-        if len(self.wiring_str) != 26:
+        if len(self.wiring_str) != ALPHA_LABELS_LEN:
             raise RotorError("invalid wiring length")
 
         # check wiring format; must contain A-Z
@@ -113,22 +122,22 @@ class Rotor:
         if input_set != WIRING_FREQ_SET:
             raise RotorError("invalid wiring frequency")
 
-        if not isinstance(ring_setting, int) or not (0 <= ring_setting < 26):
+        if not isinstance(ring_setting, int) or not (0 <= ring_setting < ALPHA_LABELS_LEN):
             raise RotorError("invalid ring_setting")
 
         # Create two lists to describe the internal wiring. Two lists are used
         # to do fast lookup from both entry (from the right) and exit (from the
         # left). 
-        self.entry_map = [ord(pin) - ord('A') for pin in self.wiring_str]
+        self.entry_map = [ALPHA_LABELS.index(pin) for pin in self.wiring_str]
         
-        self.exit_map = [0] * 26
+        self.exit_map = [0] * ALPHA_LABELS_LEN
         for i, v in enumerate(self.entry_map):
             self.exit_map[v] = i
 
         # build a map of display values to positions
         self.display_map = {}
-        for n in range(26):
-            self.display_map[chr(ord('A') + n)] = (n - self.ring_setting) % 26
+        for n in range(ALPHA_LABELS_LEN):
+            self.display_map[ALPHA_LABELS[n]] = (n - self.ring_setting) % ALPHA_LABELS_LEN
 
         # build a reverse map of position mapped to display values
         self.pos_map = {v : k for k, v in self.display_map.items()}
@@ -144,7 +153,7 @@ class Rotor:
                     raise RotorError("stepping: %s" % pos)
 
         # initialize our position and display value:
-        self.set_display('A')
+        self.set_display(ALPHA_LABELS[0])
 
     def set_display(self, val):
         """Spin the rotor such that the string val appears in the operator
@@ -161,7 +170,8 @@ class Rotor:
         Setting the display resets the internal rotation counter to 0.
 
         """
-        s = val.upper()
+        s = val
+
         if s not in self.display_map:
             raise RotorError("bad display value %s" % val)
 
@@ -183,13 +193,24 @@ class Rotor:
 
         """
         # determine what pin we have at that position due to rotation
-        pin = (n + self.pos) % 26
+        pin = (n + self.pos) % ALPHA_LABELS_LEN
 
         # run it through the internal wiring
         contact = self.entry_map[pin]
 
         # turn back into a position due to rotation
-        return (contact - self.pos) % 26
+        return (contact - self.pos) % ALPHA_LABELS_LEN
+   
+    def signal_in_reflector(self, n):
+        """Simulate a signal entering the rotor from the right at a given pin
+        position n.
+
+        n must be an integer between 0 and 25.
+
+        Returns the contact number of the output signal (0-25) and plaintext signal.
+
+        """
+        return self.signal_in(n), (n in self.plaintext_pins)
 
     def signal_out(self, n):
         """Simulate a signal entering the rotor from the left at a given
@@ -201,13 +222,13 @@ class Rotor:
 
         """
         # determine what contact we have at that position due to rotation
-        contact = (n + self.pos) % 26
+        contact = (n + self.pos) % ALPHA_LABELS_LEN
 
         # run it through the internal wiring
         pin = self.exit_map[contact]
 
         # turn back into a position due to rotation
-        return (pin - self.pos) % 26
+        return (pin - self.pos) % ALPHA_LABELS_LEN
 
     def notch_over_pawl(self):
         """Return True if this rotor has a notch in the stepping position and
@@ -215,10 +236,10 @@ class Rotor:
 
         """
         return self.display_val in self.step_set
-
+        
     def rotate(self):
         """Rotate the rotor forward due to mechanical stepping action."""
 
-        self.pos = (self.pos + 1) % 26
+        self.pos = (self.pos + 1) % ALPHA_LABELS_LEN
         self.display_val = self.pos_map[self.pos]
         self.rotations += 1
