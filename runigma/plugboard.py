@@ -96,7 +96,7 @@ class Plugboard:
         alphabetic pairs. For example: 'PO ML IU KJ NH YT GB VF RE DC' 
 
         In the Kriegsmarine syntax, the settings are given as a string of number
-        pairs, separated by a '/'. Note that the numbering uses 1-26, inclusive.
+        pairs, separated by a '/'. Note that the numbering uses 1-70, inclusive.
         For example: '18/26 17/4 21/6 3/16 19/14 22/7 8/1 12/25 5/9 10/15'
 
         To specify no plugboard connections, settings can be None or an empty
@@ -189,11 +189,11 @@ class Plugboard:
         return copy.deepcopy(self.wiring_map)
 
     def is_wired(self, n):
-        """Returns True if connection n has a cable attached; 0 <= n < 26."""
+        """Returns True if connection n has a cable attached; 0 <= n < 70."""
         return self.wiring_map[n] != n
 
     def is_free(self, n):
-        """Returns True if connection n has no cable attached; 0 <= n < 26."""
+        """Returns True if connection n has no cable attached; 0 <= n < 70."""
         return self.wiring_map[n] == n
 
     def __enter__(self):

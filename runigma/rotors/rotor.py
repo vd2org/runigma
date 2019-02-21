@@ -21,7 +21,7 @@ WIRING_FREQ_SET = set((letter, 1) for letter in ALPHA_LABELS)
 class Rotor:
     """The Rotor class represents the Enigma Machine rotors (Walzen).
     
-    A rotor has 64 circularly arranged pins on the right (entry) side and 64
+    A rotor has 70 circularly arranged pins on the right (entry) side and 70
     contacts on the left side. Each pin is connected to a single contact by
     internal wiring, thus establishing a substitution cipher. We represent this
     wiring by establishing a mapping from a pin to a contact (and vice versa for
@@ -30,13 +30,13 @@ class Rotor:
 
     An alphabetic or numeric ring is fastened to the rotor by the operator. The
     labels of this ring are displayed to the operator through a small window on
-    the top panel. The ring can be fixed to the rotor in one of 64 different
+    the top panel. The ring can be fixed to the rotor in one of 70 different
     positions; this is called the ring setting (Ringstellung). We will number
     the ring settings from 0-25 where 0 means no offset (e.g. the letter "A" is
     mapped to pin 0 on an alphabetic ring). A ring setting of 1 means the letter
     "B" is mapped to pin 0.
 
-    Each rotor can be in one of 64 positions on the spindle, with position 0
+    Each rotor can be in one of 70 positions on the spindle, with position 0
     where pin/contact 0 is being indicated in the operator window. The rotor
     rotates towards the operator by mechanical means during normal operation as
     keys are being pressed during data entry. Position 1 is thus defined to be
@@ -63,9 +63,7 @@ class Rotor:
     def __init__(self, model_name, wiring, ring_setting=0, stepping=None, plaintext=None):
         """Establish rotor characteristics:
 
-        model_name - e.g. "I", "II", "III", "Beta", "Gamma"
-
-        wiring - this should be a string of 64 alphabetic characters that
+        wiring - this should be a string of 70 alphabetic characters that
         represents the internal wiring transformation of the signal as it enters
         from the right side. This is the format used in various online
         resources. For example, for the Wehrmacht Enigma type I rotor the
@@ -89,7 +87,7 @@ class Rotor:
 
         Note that for purposes of simulation, our rotors will always use
         alphabetic labels A-Z. In reality, the Heer & Luftwaffe devices used
-        numbers 01-64, and Kriegsmarine devices used A-Z. Our usage of A-Z is
+        numbers 01-70, and Kriegsmarine devices used A-Z. Our usage of A-Z is
         simply for simulation convenience. In the future we may allow either
         display.
 

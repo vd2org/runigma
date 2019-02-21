@@ -16,7 +16,7 @@ from .keyfile import get_daily_settings
 class EnigmaError(Exception):
     pass
 
-# The Enigma keyboard consists of the 26 letters of the alphabet, uppercase
+# The Enigma keyboard consists of the 70 letters of the alphabet, uppercase
 # only:
 KEYBOARD_CHARS = 'abcdefghijklmnopqrstuvwxyzАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ0123456789_'
 KEYBOARD_CHARS_LEN = len(KEYBOARD_CHARS)
@@ -29,20 +29,14 @@ class EnigmaMachine:
     def __init__(self, rotors, reflector, plugboard):
         """Configures the Enigma Machine. Parameters are as follows:
 
-        rotors - a list containing 3 or 4 (for the Kriegsmarine M4 version)
-        Rotor objects. The order of the list is important. The first rotor is
-        the left-most rotor, and the last rotor is the right-most (from the
-        operator's perspective sitting at the machine).
+        rotors - a list containing 5 Rotor objects. The order of the list
+        is important. The first rotor is the left-most rotor, and the last
+        rotor is the right-most (from the operator's perspective sitting at
+        the machine).
 
-        reflector - a rotor object to represent the reflector (UKW)
+        reflector - a rotor object to represent the reflector
 
         plugboard - a plugboard object to represent the state of the plugboard
-
-        Note that on the military Enigma machines we are simulating, the entry
-        wheel is a simple straight-pass through and is not simulated here. It
-        would not be too hard to add a parameter for the entry wheel and pass a
-        Rotor object for it if it is desired to simulate a non-military Enigma
-        machine.
 
         """
         if len(rotors) != 5:
@@ -62,22 +56,22 @@ class EnigmaMachine:
 
         rotors: either a list of strings naming the rotors from left to right
         or a single string:
-            e.g. ["I", "III", "IV"] or "I III IV"
+            e.g. ["A", "Б", "В", "Г", "Д"] or "А Б В Г Д"
 
         ring_settings: either a list/tuple of integers, a string, or None to
         represent the ring settings to be applied to the rotors in the rotors
         list. The acceptable values are:
-            - A list/tuple of integers with values between 0-25
-            - A string; either space separated letters or numbers, e.g. 'B U L'
-              or '2 21 12'. If numbers are used, they are 1-based to match
-              historical key sheet data.
+            - A list/tuple of integers with values between 0-69
+            - A string; either space separated letters or numbers, e.g. 'А Б В Г Д'
+              or '2 21 12 12 12'. If numbers are used, they are 1-based to match
+              historical key sheet data of Enigma.
             - None means all ring settings are 0.
 
         reflector: a string that names the reflector to use
 
         plugboard_settings: a string of plugboard settings as you might find
         on a key sheet; e.g. 
-            'PO ML IU KJ NH YT GB VF RE DC' 
+            'АБ ВГ ЕЖ ЗИ КЛ МН ОП РС ТУ ФХ'
         or
             '18/26 17/4 21/6 3/16 19/14 22/7 8/1 12/25 5/9 10/15'
 
@@ -171,16 +165,13 @@ class EnigmaMachine:
         # The right-most rotor's right-side ratchet is always over a pawl, and
         # it has no neighbor to the right, so it always rotates.
         #
-        # The middle rotor will rotate if either:
-        #   1) The right-most rotor's left side notch is over the 2nd pawl
+        # The middle rotors will rotate if either:
+        #   1) The right rotor's left side notch is over the 2nd pawl
         #       or
         #   2) It has a left-side notch over the 3rd pawl
         #
-        # The third rotor (from the right) will rotate only if the middle rotor
+        # The fifth rotor (from the right) will rotate only if the fourth rotor
         # has a left-side notch over the 3rd pawl.
-        #
-        # Kriegsmarine model M4 has 4 rotors, but the 4th rotor (the leftmost)
-        # does not rotate (they did not add a 4th pawl to the mechanism).
 
         rotor1 = self.rotors[-1]
         rotor2 = self.rotors[-2]
@@ -209,9 +200,9 @@ class EnigmaMachine:
         """Simulate running an electric signal through the machine in order to
         perform an encrypt or decrypt operation
 
-        signal_num - the wire (0-25) that the simulated current occurs on
+        signal_num - the wire (0-69) that the simulated current occurs on
 
-        Returns a lamp number to light (an integer 0-25).
+        Returns a lamp number to light (an integer 0-69).
 
         """
         pos = self.plugboard.signal(signal_num)

@@ -30,9 +30,9 @@ Text to process can be supplied 3 ways:
 
 Examples:
 
-    $ %(prog)s --key-file=enigma.keys -s XYZ -t HELLOXWORLDX
-    $ %(prog)s -r III IV V -i 1 2 3 -p AB CD EF GH IJ KL MN -u B -s XYZ
-    $ %(prog)s -r Beta III IV V -i A B C D -p 1/2 3/4 5/6 -u B-Thin -s WXYZ
+    $ %(prog)s --key-file=enigma.keys -s ФСИАР -t HELLOXWORLDX
+    $ %(prog)s -r A Б В Г Д -i 1 2 3 4 5 -p AB CD EF GH IJ KL MN -u Ф -s АУГСД
+    $ %(prog)s -r Д Г В Б А -i А Б В Г Ж -p 1/2 3/4 5/6 7/8 9/10 -u Я -s МВЩВО
   
 """
 
@@ -47,9 +47,9 @@ def create_from_args(parser, args):
     """Create an EnigmaMachine from command-line specs."""
 
     if args.rotors is None:
-        parser.error("Please specify 3 or 4 rotors; e.g. II IV V")
-    elif len(args.rotors) not in [3, 4]:
-        parser.error("Expecting 3 or 4 rotors; %d supplied" % len(args.rotors))
+        parser.error("Please specify 5 rotors; e.g. А Б В Г Д")
+    elif len(args.rotors) != 5:
+        parser.error("Expecting 5 rotors; %d supplied" % len(args.rotors))
 
     if args.text and args.file:
         parser.error("Please specify --text or --file, but not both")
@@ -73,19 +73,19 @@ def main():
     parser.add_argument('-d', '--day', type=int, default=None,
             help='use the settings for day DAY when reading key file')
     parser.add_argument('-r', '--rotors', nargs='+', metavar='ROTOR',
-            help='rotor list ordered from left to right; e.g III IV I')
+            help='rotor list ordered from left to right; e.g А Б В Г Д')
     parser.add_argument('-i', '--ring-settings', nargs='+',
             metavar='RING_SETTING',
-            help='ring setting list from left to right; e.g. A A J')
+            help='ring setting list from left to right; e.g. А А Г Д У')
     parser.add_argument('-p', '--plugboard', nargs='+', metavar='PLUGBOARD',
             help='plugboard settings')
     parser.add_argument('-u', '--reflector', help='reflector name')
     parser.add_argument('-s', '--start', help='starting position')
     parser.add_argument('-t', '--text', help='text to process')
     parser.add_argument('-f', '--file', help='input file to process')
-    parser.add_argument('-x', '--replace-char', default='X',
+    parser.add_argument('-x', '--replace-char', default='_',
             help=('if the input text contains chars not found on the enigma'
-                  ' keyboard, replace with this char [default: %(default)s]'))
+                  ' keyboard, replace with this char [default: %(default)]'))
     parser.add_argument('-z', '--delete-chars', default=False,
             action='store_true',
             help=('if the input text contains chars not found on the enigma'
