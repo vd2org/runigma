@@ -10,19 +10,20 @@ line consists of a sequence of space separated columns as follows:
 day number - the first column is the day number (1-31). The lines can be in
 any order.
 
-rotor list - the next 3 or 4 columns should be rotor names. 
+rotor list - the next 5 columns should be rotor names.
 
-ring settings - the next 3 or 4 columns should be ring settings. They can be
-in either alphabetic (A-Z) or numeric (0-25) formats.
+ring settings - the next 5 columns should be ring settings. They can be in either
+alphabetic (abcdefghijklmnopqrstuvwxyzАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ0123456789_)
+or numeric (0-69) formats.
 
 plugboard settings - the next 10 columns should be plugboard settings. They
-can be in either alphabetic (AB CD EF ...) or numeric (1/2 3/4 ...) formats.
+can be in either alphabetic (АБ ВГ ДЕ ...) or numeric (1/2 3/4 ...) formats.
 
 reflector - the last column must be the reflector name.
 
 Comment lines have a # character in the first column. Blank lines are ignored.
 
-Each line must either have exactly 18 or 20 columns to be valid.
+Each line must either have exactly 21 columns to be valid.
 
 """
 import datetime
@@ -54,8 +55,6 @@ def get_daily_settings(fp, day=None):
         cols = line.split()
         if len(cols) not in [18, 20]:
             raise KeyFileError("invalid column count on line %d" % n)
-        
-        rotor_count = 3 if len(cols) == 18 else 4
 
         try:
             day_num = int(cols[0])
@@ -66,14 +65,11 @@ def get_daily_settings(fp, day=None):
             continue
 
         settings = {}
-        if rotor_count == 3:
-            settings['rotors'] = cols[1:4]
-            settings['ring_settings'] = ' '.join(cols[4:7])
-        else:
-            settings['rotors'] = cols[1:5]
-            settings['ring_settings'] = ' '.join(cols[5:9])
 
-        settings['plugboard_settings'] = ' '.join(cols[-11:-1])
+        settings['rotors'] = cols[1:6]
+        settings['ring_settings'] = ' '.join(cols[6:11])
+
+        settings['plugboard_settings'] = ' '.join(cols[-12:-1])
         settings['reflector'] = cols[-1]
         return settings
 
