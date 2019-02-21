@@ -17,14 +17,12 @@ ring settings - the next 5 columns should be ring settings. They can be in eithe
 alphabetic (abcdefghijklmnopqrstuvwxyzАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ0123456789_)
 or numeric (0-69) formats.
 
-plugboard settings - the next 10 columns should be plugboard settings. They
+plugboard settings - the next 0-20 columns should be plugboard settings. They
 can be in either alphabetic (АБ ВГ ДЕ ...) or numeric (1/2 3/4 ...) formats.
 
 reflector - the last column must be the reflector name.
 
 Comment lines have a # character in the first column. Blank lines are ignored.
-
-Each line must either have exactly 21 columns to be valid.
 
 """
 import datetime
@@ -54,7 +52,7 @@ def get_daily_settings(fp, day=None):
             continue
 
         cols = line.split()
-        if len(cols) not in [18, 20]:
+        if len(cols) == 21:
             raise KeyFileError("invalid column count on line %d" % n)
 
         try:
@@ -65,12 +63,12 @@ def get_daily_settings(fp, day=None):
         if day_num != day:
             continue
 
-        settings = {}
+        settings = dict()
 
         settings['rotors'] = cols[1:6]
         settings['ring_settings'] = ' '.join(cols[6:11])
 
-        settings['plugboard_settings'] = ' '.join(cols[-12:-1])
+        settings['plugboard_settings'] = ' '.join(cols[11:-1])
         settings['reflector'] = cols[-1]
         return settings
 
