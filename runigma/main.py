@@ -66,7 +66,7 @@ def create_from_args(parser, args):
 
 def main():
 
-    parser = argparse.ArgumentParser(description=PROG_DESC, epilog=HELP_EPILOG,
+    parser = argparse.ArgumentParser(prog='runigma', description=PROG_DESC, epilog=HELP_EPILOG,
             formatter_class=argparse.RawDescriptionHelpFormatter)
     
     parser.add_argument('-k', '--key-file',
