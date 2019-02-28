@@ -94,11 +94,7 @@ class Plugboard:
         Two syntaxes are supported, the Heer/Luftwaffe and Kriegsmarine styles:
 
         In the Heer syntax, the settings are given as a string of
-        alphabetic pairs. For example: 'PO ML IU KJ NH YT GB VF RE DC' 
-
-        In the Kriegsmarine syntax, the settings are given as a string of number
-        pairs, separated by a '/'. Note that the numbering uses 1-70, inclusive.
-        For example: '18/26 17/4 21/6 3/16 19/14 22/7 8/1 12/25 5/9 10/15'
+        alphabetic pairs. For example: 'PO ML IU KJ NH YT GB VF RE DC'
 
         To specify no plugboard connections, settings can be None or an empty
         string.
@@ -112,33 +108,19 @@ class Plugboard:
             return cls(None)
 
         wiring_pairs = []
-        
-        # detect which syntax is being used
-        if settings.find('/') != -1:
-            # Kriegsmarine syntax
-            pairs = settings.split()
-            for p in pairs:
-                try:
-                    m, n = p.split('/')
-                    m, n = int(m), int(n)
-                except ValueError:
-                    raise PlugboardError('invalid pair: %s' % p)
 
-                wiring_pairs.append((m - 1, n - 1))
-        else:
-            # Heer/Luftwaffe syntax
-            pairs = settings.split()
+        pairs = settings.split()
 
-            for p in pairs:
-                if len(p) != 2:
-                    raise PlugboardError('invalid pair: %s' % p)
+        for p in pairs:
+            if len(p) != 2:
+                raise PlugboardError('invalid pair: %s' % p)
 
-                m = p[0]
-                n = p[1]
-                if m not in HEER_LABELS or n not in HEER_LABELS:
-                    raise PlugboardError('invalid pair: %s' % p)
+            m = p[0]
+            n = p[1]
+            if m not in HEER_LABELS or n not in HEER_LABELS:
+                raise PlugboardError('invalid pair: %s' % p)
 
-                wiring_pairs.append((HEER_LABELS.index(m), HEER_LABELS.index(n)))
+            wiring_pairs.append((HEER_LABELS.index(m), HEER_LABELS.index(n)))
 
         return cls(wiring_pairs)
 
@@ -158,12 +140,6 @@ class Plugboard:
         pairs.sort()
         return ' '.join('{}{}'.format(chr(t[0] + ord('A')), 
                                       chr(t[1] + ord('A'))) for t in pairs)
-
-    def navy_str(self):
-        """Return settings as a string as found on a navy key sheet."""
-        pairs = list(self.get_pairs())
-        pairs.sort()
-        return ' '.join('{}/{}'.format(t[0] + 1, t[1] + 1) for t in pairs)
 
     def __str__(self):
         """Returns a string representation of the settings in army format."""

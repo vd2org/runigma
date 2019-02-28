@@ -1,9 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright (C) 2016-2019 by Vd.
-# Copyright (C) 2012 by Brian Neal.
 # This file is part of RuNigma, the RuNigma Machine.
 # RuNigma is released under the MIT License (see License.txt).
 
-import runigma.main
+import runigma.sheet
 
-runigma.main.console_main()
+runigma.sheet.main()

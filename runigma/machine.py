@@ -61,41 +61,34 @@ class RuNigmaMachine:
         ring_settings: either a list/tuple of integers, a string, or None to
         represent the ring settings to be applied to the rotors in the rotors
         list. The acceptable values are:
-            - A list/tuple of integers with values between 0-69
-            - A string; either space separated letters or numbers, e.g. 'А Б В Г Д'
-              or '2 21 12 12 12'. If numbers are used, they are 1-based to match
-              historical key sheet data of Enigma.
-            - None means all ring settings are 0.
+            - A list/tuple of letters with values between A-_
+            - A string; either space separated letters, e.g. 'А Б В Г Д'.
+            - None means all ring settings are "a".
 
         reflector: a string that names the reflector to use
 
         plugboard_settings: a string of plugboard settings as you might find
-        on a key sheet; e.g. 
-            'АБ ВГ ЕЖ ЗИ КЛ МН ОП РС ТУ ФХ'
-        or
-            '18/26 17/4 21/6 3/16 19/14 22/7 8/1 12/25 5/9 10/15'
-
-            A value of None means no plugboard connections are made.
+        on a key sheet; e.g. 'АБ ВГ ЕЖ ЗИ КЛ МН ОП РС ТУ ФХ'. A value of None means
+        no plugboard connections are made.
 
         """
         # validate inputs
         if isinstance(rotors, str):
             rotors = rotors.split()
 
-        num_rotors = len(rotors)
-        if num_rotors != 5:
+        if len(rotors) != 5:
             raise RuNigmaError("invalid rotors list size")
 
         if ring_settings is None:
-            ring_settings = [0] * num_rotors
+            ring_settings = [0] * 5
         else:
             strings = ring_settings.split()
             ring_settings = []
             for s in strings:
                 ring_settings.append(KEYBOARD_CHARS.index(s))
 
-        if num_rotors != len(ring_settings):
-            raise RuNigmaError("# of rotors doesn't match # of ring settings")
+        if len(ring_settings) != 5:
+            raise RuNigmaError("invalid ring list size")
 
         # assemble the machine
         rotor_list = [create_rotor(r[0], r[1]) for r in zip(rotors, ring_settings)]
@@ -109,7 +102,7 @@ class RuNigmaMachine:
         """Convenience function to read key parameters from a file.
 
         fp - a file-like object that contains daily key settings
-        day - the line labeled with the day number (1-31) will be used for the
+        day - the line labeled with the day number (1-366) will be used for the
         settings. If day is None, the day number will be determined from today's
         date. 
 

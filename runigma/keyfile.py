@@ -5,20 +5,20 @@
 
 """Contains a function to read key settings from a file.
 
-A key file is expected to be formatted as one line per day of the month. Each
+A key file is expected to be formatted as one line per day of the year. Each
 line consists of a sequence of space separated columns as follows:
 
-day number - the first column is the day number (1-31). The lines can be in
+day number - the first column is the day number (1-366). The lines can be in
 any order.
 
 rotor list - the next 5 columns should be rotor names.
 
-ring settings - the next 5 columns should be ring settings. They can be in either
+ring settings - the next 5 columns should be ring settings. They should be in
 alphabetic (abcdefghijklmnopqrstuvwxyzАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ0123456789_)
-or numeric (0-69) formats.
+format.
 
 plugboard settings - the next 0-20 columns should be plugboard settings. They
-can be in either alphabetic (АБ ВГ ДЕ ...) or numeric (1/2 3/4 ...) formats.
+should be in alphabetic (АБ ВГ ДЕ ...) format.
 
 reflector - the last column must be the reflector name.
 
@@ -37,14 +37,14 @@ def get_daily_settings(fp, day=None):
 
     fp - a file-like object 
 
-    day - specifies the day number to look for in the file (1-31). If day is
+    day - specifies the day number to look for in the file (1-366). If day is
     None, the day number from today is used.
     
     Returns a dictionary of keyword arguments for RuNigmaMachine.from_key_sheet.
 
     """
     if day is None:
-        day = datetime.date.today().day
+        day = datetime.date.today().timetuple().tm_yday
 
     for n, line in enumerate(fp):
         line = line.strip()
@@ -74,5 +74,3 @@ def get_daily_settings(fp, day=None):
 
     else:
         raise KeyFileError('no entry for day %d found' % day)
-
-        return settings

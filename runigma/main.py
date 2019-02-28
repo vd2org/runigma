@@ -11,12 +11,11 @@ process text.
 import argparse
 import sys
 
+from .keyfile import KeyFileError
 from .machine import RuNigmaMachine, RuNigmaError
 from .rotors import RotorError
-from .keyfile import KeyFileError
 
-
-PROG_DESC = 'Encrypt/decrypt text according to Enigma machine key settings'
+PROG_DESC = 'Encrypt/decrypt text according to RuNigma machine key settings'
 
 HELP_EPILOG = """\
 Key settings can either be specified by command-line arguments, or read
@@ -33,9 +32,9 @@ Examples:
 
     $ %(prog)s --key-file=enigma.keys -s ФСИАР -t HELLOXWORLDX
     $ %(prog)s -r A Б В Г Д -i 1 2 3 4 5 -p AB CD EF GH IJ KL MN -u Ф -s АУГСД
-    $ %(prog)s -r Д Г В Б А -i А Б В Г Ж -p 1/2 3/4 5/6 7/8 9/10 -u Я -s МВЩВО
   
 """
+
 
 def create_from_key_file(filename, day=None):
     """Create an RuNigmaMachine from a daily key sheet."""
@@ -65,39 +64,38 @@ def create_from_args(parser, args):
 
 
 def main():
-
     parser = argparse.ArgumentParser(prog='runigma', description=PROG_DESC, epilog=HELP_EPILOG,
-            formatter_class=argparse.RawDescriptionHelpFormatter)
-    
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+
     parser.add_argument('-k', '--key-file',
-            help='path to key file for daily settings')
+                        help='path to key file for daily settings')
     parser.add_argument('-d', '--day', type=int, default=None,
-            help='use the settings for day DAY when reading key file')
+                        help='use the settings for day DAY when reading key file')
     parser.add_argument('-r', '--rotors', nargs='+', metavar='ROTOR',
-            help='rotor list ordered from left to right; e.g А Б В Г Д')
+                        help='rotor list ordered from left to right; e.g А Б В Г Д')
     parser.add_argument('-i', '--ring-settings', nargs='+',
-            metavar='RING_SETTING',
-            help='ring setting list from left to right; e.g. А А Г Д У')
+                        metavar='RING_SETTING',
+                        help='ring setting list from left to right; e.g. А А Г Д У')
     parser.add_argument('-p', '--plugboard', nargs='+', metavar='PLUGBOARD',
-            help='plugboard settings')
+                        help='plugboard settings')
     parser.add_argument('-u', '--reflector', help='reflector name')
     parser.add_argument('-s', '--start', help='starting position')
     parser.add_argument('-t', '--text', help='text to process')
     parser.add_argument('-f', '--file', help='input file to process')
     parser.add_argument('-x', '--replace-char', default='_',
-            help=('if the input text contains chars not found on the enigma'
-                  ' keyboard, replace with this char [default: %(default)]'))
+                        help=('if the input text contains chars not found on the enigma'
+                              ' keyboard, replace with this char [default: %(default)]'))
     parser.add_argument('-z', '--delete-chars', default=False,
-            action='store_true',
-            help=('if the input text contains chars not found on the enigma'
-                  ' keyboard, delete them from the input'))
+                        action='store_true',
+                        help=('if the input text contains chars not found on the enigma'
+                              ' keyboard, delete them from the input'))
     parser.add_argument('-v', '--verbose', action='store_true', default=False,
-            help='provide verbose output; include final rotor positions')
+                        help='provide verbose output; include final rotor positions')
 
     args = parser.parse_args()
 
     if args.key_file and (args.rotors or args.ring_settings or args.plugboard
-            or args.reflector):
+                          or args.reflector):
         parser.error("Please specify either a key file or command-line key "
                      "settings, but not both")
 
