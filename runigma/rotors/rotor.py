@@ -29,31 +29,23 @@ class Rotor:
     the return path). Internally we number the pins and contacts from 0-25 in a
     clockwise manner with 0 being the "top".
 
-    An alphabetic or numeric ring is fastened to the rotor by the operator. The
-    labels of this ring are displayed to the operator through a small window on
-    the top panel. The ring can be fixed to the rotor in one of 70 different
-    positions; this is called the ring setting (Ringstellung). We will number
-    the ring settings from 0-25 where 0 means no offset (e.g. the letter "A" is
-    mapped to pin 0 on an alphabetic ring). A ring setting of 1 means the letter
-    "B" is mapped to pin 0.
+    An alphabetic ring is fastened to the rotor by the operator. The labels of
+    this ring are displayed to the operator through a small window on the top
+    panel. The ring can be fixed to the rotor in one of 70 different positions;
+    this is called the ring setting. We will the ring settings from a to _ where
+    a means no offset. A ring setting of b means the letter "b" is mapped to pin 0.
 
     Each rotor can be in one of 70 positions on the spindle, with position 0
     where pin/contact 0 is being indicated in the operator window. The rotor
     rotates towards the operator by mechanical means during normal operation as
     keys are being pressed during data entry. Position 1 is thus defined to be
-    one step from position 0. Likewise, position 25 is the last position before
+    one step from position 0. Likewise, position 69 is the last position before
     another step returns it to position 0, completing 1 trip around the spindle.
 
     Finally, a rotor has a "stepping" or "turnover" parameter. Physically this
     is implemented by putting a notch on the alphabet ring and it controls when
     the rotor will "kick" the rotor to its left, causing the neighbor rotor to
-    rotate. Most rotors had one notch, but some Kriegsmarine rotors had 2
-    notches and thus rotated twice as fast.
-
-    Note that due to the system of ratchets and pawls, the middle rotor (in a 3
-    rotor Enigma) can "double-step". The middle rotor will advance on the next
-    step of the first rotor a second time in a row, if the middle rotor is in
-    its own turnover position.
+    rotate.
 
     Note that we allow the stepping parameter to be None. This indicates the
     rotor does not rotate. This allows us to model the entry wheel and
@@ -66,31 +58,22 @@ class Rotor:
 
         wiring - this should be a string of 70 alphabetic characters that
         represents the internal wiring transformation of the signal as it enters
-        from the right side. This is the format used in various online
-        resources. For example, for the Wehrmacht Enigma type I rotor the
-        mapping is "EKMFLGDQVZNTOWYHXUSPAIBRCJ".
+        from the right side.
 
-        ring_setting - this should be an integer from 0-25, inclusive, which
-        indicates the Ringstellung. A value of 0 means there is no offset; e.g.
-        the letter "A" is fixed to pin 0. A value of 1 means "B" is mapped to
-        pin 0.
+        ring_setting - this should be an letter from a to _, inclusive. A value
+        of "a" means there is no offset; e.g. the letter "a" is fixed to pin 0.
+        A value of "b" means "b" is mapped to pin 0.
 
         stepping - this is the stepping or turnover parameter. It should be an
-        iterable, for example a string such as "Q". This will indicate that when
-        the rotor transitions from "Q" to "R" (by observing the operator
+        iterable, for example a string such as "q". This will indicate that when
+        the rotor transitions from "q" to "r" (by observing the operator
         window), the rotor will "kick" the rotor to its left, causing it to
         rotate. If the rotor has more than one notch, a string of length 2 could
-        be used, e.g. "ZM".  Another way to think of this parameter is that when
+        be used, e.g. "zm".  Another way to think of this parameter is that when
         a character in the stepping string is visible in the operator window, a
         notch is lined up with the pawl on the left side of the rotor.  This
         will allow the pawl to push up on the rotor *and* the rotor to the left
         when the next key is depressed.
-
-        Note that for purposes of simulation, our rotors will always use
-        alphabetic labels A-Z. In reality, the Heer & Luftwaffe devices used
-        numbers 01-70, and Kriegsmarine devices used A-Z. Our usage of A-Z is
-        simply for simulation convenience. In the future we may allow either
-        display.
 
         """
         self.name = model_name
@@ -111,7 +94,7 @@ class Rotor:
         if len(self.wiring_str) != ALPHA_LABELS_LEN:
             raise RotorError("invalid wiring length")
 
-        # check wiring format; must contain A-Z
+        # check wiring format; must contain ALPHA_LABELS
         for c in self.wiring_str:
             if c not in ALPHA_LABELS:
                 raise RotorError("invalid wiring: %s" % wiring)
@@ -161,10 +144,10 @@ class Rotor:
         This sets the internal position of the rotor on the axle and thus
         rotates the pins and contacts accordingly.
 
-        A value of 'A' for example puts the rotor in position 0, assuming an
+        A value of 'a' for example puts the rotor in position 0, assuming an
         internal ring setting of 0.
 
-        The parameter val must be a string in 'A' - 'Z'.
+        The parameter val must be a string in ALPHA_LABELS.
 
         Setting the display resets the internal rotation counter to 0.
 
@@ -186,9 +169,9 @@ class Rotor:
         """Simulate a signal entering the rotor from the right at a given pin
         position n.
 
-        n must be an integer between 0 and 25.
+        n must be an integer between 0 and 69.
 
-        Returns the contact number of the output signal (0-25).
+        Returns the contact number of the output signal (0-69).
 
         """
         # determine what pin we have at that position due to rotation
@@ -204,9 +187,9 @@ class Rotor:
         """Simulate a signal entering the rotor from the right at a given pin
         position n.
 
-        n must be an integer between 0 and 25.
+        n must be an integer between 0 and 69.
 
-        Returns the contact number of the output signal (0-25) and plaintext signal.
+        Returns the contact number of the output signal (0-69) and plaintext signal.
 
         """
         return self.signal_in(n), (n in self.plaintext_pins)
@@ -215,9 +198,9 @@ class Rotor:
         """Simulate a signal entering the rotor from the left at a given
         contact position n.
 
-        n must be an integer between 0 and 25.
+        n must be an integer between 0 and 69.
 
-        Returns the pin number of the output signal (0-25).
+        Returns the pin number of the output signal (0-69).
 
         """
         # determine what contact we have at that position due to rotation

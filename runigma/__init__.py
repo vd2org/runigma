@@ -3,11 +3,7 @@
 # This file is part of RuNigma, the RuNigma Machine.
 # RuNigma is released under the MIT License (see License.txt).
 
-"""This package is a simulation of the Enigma Machines used by the German armed
-forces (Wehrmacht) during World War II. These include the army (Heer), air force
-(Luftwaffe), and navy (Kriegsmarine). For our purposes, the Heer and Luftwaffe
-versions are identical. The Kriegsmarine models M3 and M4 can be simulated by
-configuring an RuNigmaMachine object with the suitable rotors and reflectors.
+"""RuNigma is a fictional cypher machine inspired by World War 2's Enigma Machines.
 
 For a list of the rotors and reflectors we simulate, see the module rotors.data.
 

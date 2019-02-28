@@ -3,7 +3,7 @@
 # This file is part of RuNigma, the RuNigma Machine.
 # RuNigma is released under the MIT License (see License.txt).
 
-"""Contains the Plugboard class for simulating the plugboard (Steckerbrett)
+"""Contains the Plugboard class for simulating the plugboard
 component of the RuNigma Machine.
 
 """

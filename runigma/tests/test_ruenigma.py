@@ -3,7 +3,7 @@
 # This file is part of Py-Enigma, the Enigma Machine simulation.
 # Py-Enigma is released under the MIT License (see License.txt).
 
-"""Tests for the EnigmaMachine class."""
+"""Tests for the RuNigmaMachine class."""
 
 import unittest
 
