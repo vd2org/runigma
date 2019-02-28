@@ -32,7 +32,7 @@ print(crypted)
 
 # Command line tools
 
-## runigma command
+## runigma
 
 This tool can be used for encipher and decipher text.
 
@@ -44,7 +44,7 @@ runigma --key-file=enigma.keys -s ФСИАР -t HELLOXWORLDX
 runigma -r A Б В Г Д -i a b c d -p AB CD EF GH IJ KL MN -u Ф -s АУГСД
 ```
 
-## runigma-sheet command
+## runigma-sheet
 
 This tool can be used for generate new key sheet file.
 
