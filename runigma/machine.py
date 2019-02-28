@@ -44,7 +44,6 @@ class RuNigmaMachine:
             raise RuNigmaError("Must supply 5 rotors")
 
         self.rotors = rotors
-        self.rotor_count = len(rotors)
         self.reflector = reflector
         self.plugboard = plugboard
 
@@ -127,7 +126,7 @@ class RuNigmaMachine:
         from left to right.
 
         """
-        if len(val) != self.rotor_count:
+        if len(val) != 5:
             raise RuNigmaError("Incorrect length for display value")
 
         for i, rotor in enumerate(reversed(self.rotors)):
