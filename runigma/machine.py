@@ -1,7 +1,7 @@
 # Copyright (C) 2016-2019 by Vd.
 # Copyright (C) 2012 by Brian Neal.
 # This file is part of RuNigma, the RuNigma Machine.
-# RuNigma is released under the MIT License (see License.txt).
+# RuNigma is released under the MIT License (see LICENSE).
 
 """This module contains the top-level RuNigmaMachine class for the RuNigma Machine
 simulation.
@@ -17,7 +17,7 @@ from .keyfile import get_daily_settings
 class RuNigmaError(Exception):
     pass
 
-# The Enigma keyboard consists of the 70 letters of the alphabet, uppercase
+# The RuNigma keyboard consists of the 70 letters of the alphabet, uppercase
 # only:
 KEYBOARD_CHARS = 'abcdefghijklmnopqrstuvwxyzАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ0123456789_'
 KEYBOARD_CHARS_LEN = len(KEYBOARD_CHARS)

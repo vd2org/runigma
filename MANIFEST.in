@@ -1,4 +1,0 @@
-include *.txt
-recursive-include runigma/examples *
-recursive-include runigma/docs *.txt *.py *.rst
-prune runigma/docs/build

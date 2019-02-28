@@ -1,9 +1,9 @@
 # Copyright (C) 2016-2019 by Vd.
 # Copyright (C) 2012 by Brian Neal.
-# This file is part of Py-Enigma, the Enigma Machine simulation.
-# Py-Enigma is released under the MIT License (see License.txt).
+# This file is part of RuNigma, the RuNigma Machine.
+# RuNigma is released under the MIT License (see LICENSE).
 
-"""rotor.py - this module contains the Rotor class for the Enigma simulation."""
+"""rotor.py - this module contains the Rotor class for the RuNigma simulation."""
 
 import string
 import collections
@@ -20,7 +20,7 @@ WIRING_FREQ_SET = set((letter, 1) for letter in ALPHA_LABELS)
 
 
 class Rotor:
-    """The Rotor class represents the Enigma Machine rotors (Walzen).
+    """The Rotor class represents the RuNigma Machine rotors.
     
     A rotor has 70 circularly arranged pins on the right (entry) side and 70
     contacts on the left side. Each pin is connected to a single contact by
