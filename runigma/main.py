@@ -84,7 +84,7 @@ def main():
     parser.add_argument('-f', '--file', help='input file to process')
     parser.add_argument('-x', '--replace-char', default='_',
                         help=('if the input text contains chars not found on the enigma'
-                              ' keyboard, replace with this char [default: %(default)]'))
+                              ' keyboard, replace with this char [default: %(default)s]'))
     parser.add_argument('-z', '--delete-chars', default=False,
                         action='store_true',
                         help=('if the input text contains chars not found on the enigma'
