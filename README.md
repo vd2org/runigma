@@ -19,7 +19,8 @@ reflector = 'Ш'
 ring_settings = 'a _ y g Б'
 plugboard_settings = 'xЕ hЬ КМ Тn iЗ АЛ ЮЫ Бt z8 ОШ wЯ y0 a7 4Ъ СЖ p6 Эe g_ 2b dc'
 
-machine = RuNigmaMachine.from_key_sheet(rotors=rotors, reflector=reflector, ring_settings=ring_settings,
+machine = RuNigmaMachine.from_key_sheet(rotors=rotors, reflector=reflector,
+                                        ring_settings=ring_settings,
                                         plugboard_settings=plugboard_settings)
 
 machine.set_display('ЯХ3ОЪ')
